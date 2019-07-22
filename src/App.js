@@ -1,25 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <renderer clearColor={[0, 0, 0, 1]}>
+      <program>
+        <shader type="vertex">
+          {`
+            attribute vec4 a_position;
+    
+            void main() {
+              gl_Position = a_position;
+            }
+          `}
+        </shader>
+        <shader type="fragment">
+          {`
+            precision mediump float;
+          
+            void main() {
+              gl_FragColor = vec4(1, 0, 0.5, 1);
+            }
+          `}
+        </shader>
+      </program>
+      <model vertices={[
+        0, 0,
+        0, 0.5,
+        0.7, 0,
+      ]}/>
+      <model vertices={[
+        0, 0,
+        0, -0.5,
+        -0.7, 0,
+      ]}/>
+    </renderer>
   );
 }
 
