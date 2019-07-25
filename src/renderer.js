@@ -1,15 +1,11 @@
 import Reconciler from 'react-reconciler'
-import shaderHelper from './helpers/shader'
-import programHelper from './helpers/program'
-import rendererHelper from './helpers/renderer'
-import modelHelper from './helpers/model'
+import * as scheduler from 'scheduler';
+import Shader from './components/shader'
+import Program from './components/program'
+import Renderer from './components/renderer'
+import Model from './components/model'
 
-const helperMap = {
-  'shader': shaderHelper,
-  'program': programHelper,
-  'renderer': rendererHelper,
-  'model': modelHelper
-}
+const components = [Model, Renderer, Shader, Program].reduce((obj, el) => ({ ...obj, [el.tagName]: el }), {})
 
 const HostConfig = {
   supportsMutation: true,
@@ -23,40 +19,16 @@ const HostConfig = {
     return parentContext
   },
   shouldSetTextContent(type, nextProps) {
-    return ['shader', 'model'].includes(type)
+    return components[type].shouldSetTextContent
   },
   createTextInstance(newText, rootContainerInstance, currentHostContext, workInProgress) {
     return null
   },
   createInstance(type, newProps, rootContainerInstance, currentHostContext, workInProgress) {
-    switch(type) {
-      case 'renderer':
-      case 'model':
-      case 'program':
-      case 'shader': {
-        return helperMap[type].createInstance(
-          newProps,
-          rootContainerInstance,
-          currentHostContext,
-          workInProgress
-        )
-      }
-      default: {
-        throw new Error(`${type} is not a valid element`)
-      }
-    }
+    return new components[type](newProps, rootContainerInstance, currentHostContext)
   },
   appendInitialChild(parent, child) {
-    switch(parent.type) {
-      case 'renderer':
-      case 'program': {
-        helperMap[parent.type].appendInitialChild(parent, child)
-        break
-      }
-      default: {
-        break
-      }
-    }
+    return parent.appendChild(child)
   },
   finalizeInitialChildren(...args) {
     return false
@@ -66,8 +38,18 @@ const HostConfig = {
   resetAfterCommit(rootContainerInstance) {
   },
   appendChildToContainer(parent, child) {
-    rendererHelper.start(child)
-  }
+    child.start()
+  },
+  prepareUpdate(wordElement, type, oldProps, newProps) {
+		return true;
+  },
+  commitUpdate(element, payload, type, oldProps, newProps){ 
+    return element.commitUpdate(newProps, oldProps)
+  },
+  scheduleDeferredCallback: scheduler.unstable_scheduleCallback,
+  cancelDeferredCallback: scheduler.unstable_cancelCallback,
+  schedulePassiveEffects: scheduler.unstable_scheduleCallback,
+  cancelPassiveEffects: scheduler.unstable_cancelCallback
 }
 
 const instance = Reconciler(HostConfig)
