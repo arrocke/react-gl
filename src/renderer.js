@@ -66,7 +66,7 @@ const HostConfig = {
   resetAfterCommit(rootContainerInstance) {
   },
   appendChildToContainer(parent, child) {
-    rendererHelper.start(parent, child)
+    rendererHelper.start(child)
   }
 }
 
@@ -75,8 +75,8 @@ const instance = Reconciler(HostConfig)
 export default {
   render(element, renderDom, callback) {
     const canvas = document.createElement('canvas')
-    canvas.style.width = `${renderDom.clientWidth}px`
-    canvas.style.height = `${renderDom.clientHeight}px`
+    canvas.style.width = `100%`
+    canvas.style.height = `100%`
     renderDom.appendChild(canvas)
 
     instance.updateContainer(

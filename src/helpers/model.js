@@ -1,5 +1,5 @@
 function createInstance(
-  { vertices },
+  { vertices, x, y },
   rootContainer,
   { gl, ...hostContext },
   workInProgress
@@ -15,7 +15,8 @@ function createInstance(
     type: 'model',
     buffer,
     gl,
-    vertices
+    vertices,
+    x, y
   }
 }
 
