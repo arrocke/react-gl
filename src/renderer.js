@@ -3,9 +3,10 @@ import * as scheduler from 'scheduler';
 import Shader from './components/shader'
 import Program from './components/program'
 import Renderer from './components/renderer'
-import Model from './components/model'
+import Buffer from './components/buffer'
+import Attribute from './components/attribute'
 
-const components = [Model, Renderer, Shader, Program].reduce((obj, el) => ({ ...obj, [el.tagName]: el }), {})
+const components = [Attribute, Buffer, Renderer, Shader, Program].reduce((obj, el) => ({ ...obj, [el.tagName]: el }), {})
 
 const HostConfig = {
   supportsMutation: true,

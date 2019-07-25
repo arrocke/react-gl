@@ -3,7 +3,6 @@ export default class Renderer {
     gl.clearColor(...clearColor)
     this.clearColor = clearColor 
     this.programs = []
-    this.models = []
     this.gl = gl
   }
 
@@ -11,10 +10,6 @@ export default class Renderer {
     switch(child.constructor.name) {
       case 'Program': {
         this.programs.push(child)
-        break
-      }
-      case 'Model': {
-        this.models.push(child)
         break
       }
       default: {
@@ -30,7 +25,8 @@ export default class Renderer {
   }
 
   start() {
-    const { gl, models } = this
+    console.log(this)
+    const { gl, programs } = this
     const { canvas } = gl
 
     function step(t1, t2) {
@@ -41,7 +37,7 @@ export default class Renderer {
 
       gl.clear(gl.COLOR_BUFFER_BIT)
 
-      models.forEach(model => model.render())
+      programs.forEach(program => program.run())
 
       // root.update(t2 - t1)
       requestAnimationFrame(t3 => step(t2, t3))
