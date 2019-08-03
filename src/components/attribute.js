@@ -7,7 +7,6 @@ export default class Attribute {
   appendChild (child) {
     switch(child.constructor.name) {
       case 'Buffer': {
-        console.log('attach buffer')
         this.buffer = child
         break
       }

@@ -24,8 +24,13 @@ export default class Renderer {
     this.clearColor = clearColor
   }
 
+  getPublicInstance() {
+    return {
+      canvas: this.gl.canvas
+    }
+  }
+
   start() {
-    console.log(this)
     const { gl, programs } = this
     const { canvas } = gl
 

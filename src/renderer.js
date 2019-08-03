@@ -5,8 +5,9 @@ import Program from './components/program'
 import Renderer from './components/renderer'
 import Buffer from './components/buffer'
 import Attribute from './components/attribute'
+import Uniform from './components/uniform'
 
-const components = [Attribute, Buffer, Renderer, Shader, Program].reduce((obj, el) => ({ ...obj, [el.tagName]: el }), {})
+const components = [Uniform, Attribute, Buffer, Renderer, Shader, Program].reduce((obj, el) => ({ ...obj, [el.tagName]: el }), {})
 
 const HostConfig = {
   supportsMutation: true,
@@ -46,6 +47,9 @@ const HostConfig = {
   },
   commitUpdate(element, payload, type, oldProps, newProps){ 
     return element.commitUpdate(newProps, oldProps)
+  },
+  getPublicInstance(element) {
+    return element.getPublicInstance()
   },
   scheduleDeferredCallback: scheduler.unstable_scheduleCallback,
   cancelDeferredCallback: scheduler.unstable_cancelCallback,

@@ -3,6 +3,7 @@ export default class Program {
     this.id = id
     this.program = gl.createProgram()
     this.attributes = []
+    this.uniforms = []
     this.gl = gl
   }
 
@@ -32,6 +33,10 @@ export default class Program {
         this.attributes.push(child)
         break
       }
+      case 'Uniform': {
+        this.uniforms.push(child)
+        break
+      }
       default: {
         throw new Error(`Invalid child element to <program>.`)
       }
@@ -43,16 +48,12 @@ export default class Program {
   }
 
   run() {
-    const { gl, attributes, program } = this
+    const { gl, attributes, uniforms, program } = this
 
-
-    const resUniform = gl.getUniformLocation(program, 'u_resolution')
-    const transUniform = gl.getUniformLocation(program, 'u_translate')
 
     gl.useProgram(program)
-    gl.uniform2f(resUniform, gl.canvas.width, gl.canvas.height)
-    gl.uniform2f(transUniform, 0, 0)
 
+    uniforms.forEach(uniform => uniform.use(program))
     attributes.forEach(attribute => attribute.use(program))
 
   }
