@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 function DefaultShaderProgram ({ model, translation, resolution }) {
+  const [color, setColor] = useState('1, 0, 0.5, 1')
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setColor('0.5, 1, 0, 1')
+    }, 4000)
+    return () => clearTimeout(timeout)
+  }, [color])
   return (
-      <program id="default">
+      <program>
         <shader type="vertex">
           {`
             attribute vec4 a_position;
@@ -20,7 +27,7 @@ function DefaultShaderProgram ({ model, translation, resolution }) {
             precision mediump float;
           
             void main() {
-              gl_FragColor = vec4(1, 0, 0.5, 1);
+              gl_FragColor = vec4(${color});
             }
           `}
         </shader>

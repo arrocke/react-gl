@@ -1,6 +1,5 @@
 export default class Program {
-  constructor({ id }, root, { gl }) {
-    this.id = id
+  constructor(props, root, { gl }) {
     this.program = gl.createProgram()
     this.attributes = []
     this.uniforms = []
@@ -8,25 +7,19 @@ export default class Program {
   }
 
   appendChild(child) {
+    const { gl, program } = this
     switch(child.constructor.name) {
       case 'Shader': {
         if (child.shaderType === 'VERTEX_SHADER') {
           this.vertexShader = child
+          gl.attachShader(program, this.vertexShader.shader);
+          child.program = this
         } else if (child.shaderType === 'FRAGMENT_SHADER') {
           this.fragmentShader = child
+          gl.attachShader(program, this.fragmentShader.shader);
+          child.program = this
         }
-
-        const {vertexShader, fragmentShader, program, gl} = this
-        if (vertexShader && fragmentShader) {
-          gl.attachShader(program, vertexShader.shader);
-          gl.attachShader(program, fragmentShader.shader);
-          gl.linkProgram(program);
-          if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            const log = gl.getProgramInfoLog(program)
-            gl.deleteProgram(program);
-            throw new Error(`Program compile error: ${log}`)
-          }
-        }
+        this.link()
         break
       }
       case 'Attribute': {
@@ -42,14 +35,25 @@ export default class Program {
       }
     }
   }
+
+  link() {
+    const {vertexShader, fragmentShader, program, gl} = this
+    if (vertexShader && vertexShader.shader && fragmentShader && fragmentShader.shader) {
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        const log = gl.getProgramInfoLog(program)
+        gl.deleteProgram(program);
+        throw new Error(`Program compile error: ${log}`)
+      }
+    }
+  }
   
   commitUpdate() {
-
+    // TODO: compare shader source to determine if program needs to be recompiled.
   }
 
   run() {
     const { gl, attributes, uniforms, program } = this
-
 
     gl.useProgram(program)
 
