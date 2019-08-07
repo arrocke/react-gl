@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
-function DefaultShaderProgram ({ model, translation, resolution }) {
-  const [on, setOn] = useState(false)
-  useEffect(() => {
-    const interval = setInterval(() => setOn(on => !on), 1000)
-    return () => clearInterval(interval)
-  }, [])
-
+function DefaultShaderProgram ({ model, translation, resolution, color }) {
   return (
     <program>
       <shader type="VERTEX_SHADER">
@@ -17,7 +11,7 @@ function DefaultShaderProgram ({ model, translation, resolution }) {
           uniform vec2 u_translation;
   
           void main() {
-            gl_Position = vec4((a_position.xy + u_translation) / u_resolution * vec2(2, -2), 0, 1);
+            gl_Position = vec4((a_position.xy + u_translation - u_resolution / vec2(2, 2)) / u_resolution * vec2(2, -2), 0, 1);
           }
         `}
       </shader>
@@ -36,7 +30,7 @@ function DefaultShaderProgram ({ model, translation, resolution }) {
       </attribute>
       <uniform name="u_resolution" value={resolution} type="2f" />
       <uniform name="u_translation" value={translation} type="2f" />
-      <uniform name="u_color" value={on ? [0.5, 0, 0, 1] : [0, 0.5, 0, 1]} type="4f" />
+      <uniform name="u_color" value={color} type="4f" />
     </program>
   )
 }

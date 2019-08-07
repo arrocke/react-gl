@@ -1,20 +1,30 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 function useResolution() {
   const [resolution, setResolution] = useState([0, 0])
-  const renderer = useRef()
+  const rendererRef = useRef()
+
+  function updateResolution (renderer) {
+    const { canvas } = renderer
+    setResolution([canvas.width, canvas.height])
+  }
+
+  const renderer = useCallback((renderer) => {
+    rendererRef.current = renderer
+    if (renderer) {
+      updateResolution(renderer)
+    }
+  }, [])
 
   useEffect(() => {
-    const handler = () => {
-      if (renderer.current) {
-        const { canvas } = renderer.current
-        setResolution([canvas.width, canvas.height])
+    function handler () {
+      if (rendererRef.current) {
+        updateResolution(rendererRef.current)
       }
     }
     window.addEventListener('resize', handler)
-    handler()
     return () => window.removeEventListener('resize', handler)
-  }, [renderer])
+  }, [rendererRef])
 
   return { renderer, resolution }
 }

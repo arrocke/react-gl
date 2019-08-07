@@ -1,9 +1,16 @@
 export default class Renderer {
-  constructor({ clearColor = [0, 0, 0, 1] }, root, { gl }) {
+  constructor({ clearColor = [0, 0, 0, 1], onSetup = () => {}, onUpdate = () => {} }, root, { gl }) {
     gl.clearColor(...clearColor)
     this.clearColor = clearColor 
     this.programs = []
     this.gl = gl
+
+    const canvas = gl.canvas
+    canvas.width = canvas.clientWidth
+    canvas.height = canvas.clientHeight
+
+    this.onSetup = onSetup
+    this.onUpdate = onUpdate
   }
 
   appendChild(child) {
@@ -18,10 +25,19 @@ export default class Renderer {
     }
   }
 
-  commitUpdate({ clearColor }) {
-    this.clearColor = clearColor
-    this.gl.clearColor(...this.clearColor)
-    this.clearColor = clearColor
+  commitUpdate({ clearColor, onSetup, onUpdate }) {
+    if (this.clearColor !== clearColor) {
+      this.clearColor = clearColor
+      this.gl.clearColor(...this.clearColor)
+    }
+
+    if (this.onSetup !== onSetup) {
+      this.onSetup = onSetup
+    }
+
+    if (this.onUpdate !== onUpdate) {
+      this.onUpdate = onUpdate
+    }
   }
 
   getPublicInstance() {
@@ -34,7 +50,9 @@ export default class Renderer {
     const { gl, programs } = this
     const { canvas } = gl
 
-    function step(t1, t2) {
+    this.onSetup({ gl })
+
+    const step = (t1, t2) => {
       // Resize canvas
       canvas.width = canvas.clientWidth
       canvas.height = canvas.clientHeight
@@ -44,7 +62,7 @@ export default class Renderer {
 
       programs.forEach(program => program.run())
 
-      // root.update(t2 - t1)
+      this.onUpdate({ gl, dt: t2 - t1, t: t2 })
       requestAnimationFrame(t3 => step(t2, t3))
     } 
     requestAnimationFrame(t => step(t, t))
