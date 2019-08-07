@@ -5,6 +5,7 @@ export default class Shader {
     const shader = gl.createShader(gl[type])
     this.shader = shader
 
+    // Set shader source and compile
     gl.shaderSource(shader, source)
     this.compile()
 
@@ -16,21 +17,27 @@ export default class Shader {
     if (source !== oldSource) {
       const { gl, shader } = this
 
-      gl.shaderSource(shader, source)
+      // Reset shader source and recompile.
       this.source = source
-
+      gl.shaderSource(shader, source)
       this.compile()
+
+      // Relink program attached to the shader.
       this.program && this.program.link()
     }
+  }
+
+  getPublicInstance() {
+    return this.shader
   }
 
   compile() {
     const { shader, gl } = this
     gl.compileShader(shader)
 
+    // Throw error if compilation failed.
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       const log = gl.getShaderInfoLog(shader)
-      gl.deleteShader(shader)
       throw new Error(`Shader compilation error: ${log}`)
     }
   }

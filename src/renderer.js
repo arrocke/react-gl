@@ -49,7 +49,7 @@ const HostConfig = {
     return element.commitUpdate(newProps, oldProps)
   },
   getPublicInstance(element) {
-    return element.getPublicInstance()
+    return element.getPublicInstance && element.getPublicInstance()
   },
   scheduleDeferredCallback: scheduler.unstable_scheduleCallback,
   cancelDeferredCallback: scheduler.unstable_cancelCallback,
