@@ -1,15 +1,14 @@
 export default class Shader {
   constructor({ type, children: source }, root, { gl }) {
     this.gl = gl
-    const shaderType = `${type.toUpperCase()}_SHADER`
 
-    const shader = gl.createShader(gl[shaderType])
+    const shader = gl.createShader(gl[type])
     this.shader = shader
 
     gl.shaderSource(shader, source)
     this.compile()
 
-    this.shaderType = shaderType
+    this.type = type
     this.source = source
   }
   

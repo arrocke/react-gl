@@ -10,11 +10,11 @@ export default class Program {
     const { gl, program } = this
     switch(child.constructor.name) {
       case 'Shader': {
-        if (child.shaderType === 'VERTEX_SHADER') {
+        if (child.type === 'VERTEX_SHADER') {
           this.vertexShader = child
           gl.attachShader(program, this.vertexShader.shader);
           child.program = this
-        } else if (child.shaderType === 'FRAGMENT_SHADER') {
+        } else if (child.type === 'FRAGMENT_SHADER') {
           this.fragmentShader = child
           gl.attachShader(program, this.fragmentShader.shader);
           child.program = this

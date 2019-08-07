@@ -3,7 +3,7 @@ import React from 'react'
 function DefaultShaderProgram ({ model, translation, resolution }) {
   return (
     <program>
-      <shader type="vertex">
+      <shader type="VERTEX_SHADER">
         {`
           attribute vec4 a_position;
 
@@ -15,7 +15,7 @@ function DefaultShaderProgram ({ model, translation, resolution }) {
           }
         `}
       </shader>
-      <shader type="fragment">
+      <shader type="FRAGMENT_SHADER">
         {`
           precision mediump float;
         
