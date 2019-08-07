@@ -1,6 +1,6 @@
 import React from 'react'
 
-function DefaultShaderProgram ({ model, translation, resolution, color }) {
+function DefaultShaderProgram ({ buffer, translation, resolution, color }) {
   return (
     <program>
       <shader type="VERTEX_SHADER">
@@ -25,9 +25,7 @@ function DefaultShaderProgram ({ model, translation, resolution, color }) {
           }
         `}
       </shader>
-      <attribute name="a_position">
-        { model }
-      </attribute>
+      <attribute name="a_position" buffer={buffer} size={2} mode="TRIANGLES" />
       <uniform name="u_resolution" value={resolution} type="2f" />
       <uniform name="u_translation" value={translation} type="2f" />
       <uniform name="u_color" value={color} type="4f" />

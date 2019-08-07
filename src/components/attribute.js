@@ -1,19 +1,24 @@
 export default class Attribute {
-  constructor({ name }, root, { gl }) {
+  constructor({
+    name,
+    buffer,
+    size,
+    type = 'FLOAT',
+    normalize = false,
+    stride = 0,
+    offset = 0,
+    mode
+  }, root, { gl, buffers }) {
     this.gl = gl
     this.name = name
-  }
-
-  appendChild (child) {
-    switch(child.constructor.name) {
-      case 'Buffer': {
-        this.buffer = child
-        break
-      }
-      default: {
-        throw new Error(`Invalid child element to <attribute>.`)
-      }
-    }
+    this.bufferName = buffer
+    this.size = size
+    this.type = type
+    this.normalize = normalize
+    this.stride = stride
+    this.offset = offset
+    this.buffers = buffers
+    this.mode = mode
   }
   
   commitUpdate() {
@@ -21,16 +26,15 @@ export default class Attribute {
   }
 
   use(program) {
-    const { gl, name, buffer: { buffer, data } } = this
+    const { gl, name, bufferName, size, type, normalize, stride, offset, mode } = this
+    const { buffer, data } = this.buffers[bufferName]
     const position = gl.getAttribLocation(program, name)
     gl.enableVertexAttribArray(position)
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0)
-    gl.drawArrays(gl.TRIANGLES, 0, Math.floor(data.length / 2))
+    gl.vertexAttribPointer(position, size, gl[type], normalize, stride, offset)
+    gl.drawArrays(gl[mode], 0, Math.floor(data.length / size))
   }
 }
 
 Attribute.tagName = 'attribute'
 Attribute.shouldSetTextContent = false
-
-

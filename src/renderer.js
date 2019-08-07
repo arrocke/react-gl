@@ -14,7 +14,8 @@ const HostConfig = {
   now: Date.now,
   getRootHostContext(nextRootInstance) {
     return {
-      gl: nextRootInstance.getContext('webgl')
+      gl: nextRootInstance.getContext('webgl'),
+      buffers: {}
     }
   },
   getChildHostContext(parentContext, fiberType, rootInstance) {

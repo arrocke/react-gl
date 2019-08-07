@@ -1,5 +1,5 @@
 export default class Buffer {
-  constructor({ data }, root, { gl }) {
+  constructor({ data, name }, root, { gl, buffers }) {
     const buffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
     gl.bufferData(
@@ -11,6 +11,9 @@ export default class Buffer {
     this.gl = gl
     this.buffer = buffer
     this.data = data
+    this.name = name
+
+    buffers[name] = this
   }
   
   commitUpdate() {

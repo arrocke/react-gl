@@ -19,6 +19,10 @@ export default class Renderer {
         this.programs.push(child)
         break
       }
+      case 'Buffer': {
+        // Buffers are added to the global context, so the renderer does not need to do anything here.
+        break
+      }
       default: {
         throw new Error(`Invalid child element to <renderer>.`)
       }
@@ -53,6 +57,8 @@ export default class Renderer {
     this.onSetup({ gl })
 
     const step = (t1, t2) => {
+      this.onUpdate({ gl, dt: t2 - t1, t: t2 })
+
       // Resize canvas
       canvas.width = canvas.clientWidth
       canvas.height = canvas.clientHeight
@@ -62,7 +68,6 @@ export default class Renderer {
 
       programs.forEach(program => program.run())
 
-      this.onUpdate({ gl, dt: t2 - t1, t: t2 })
       requestAnimationFrame(t3 => step(t2, t3))
     } 
     requestAnimationFrame(t => step(t, t))
