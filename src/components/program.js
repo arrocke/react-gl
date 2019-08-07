@@ -38,11 +38,12 @@ export default class Program {
 
   link() {
     const {vertexShader, fragmentShader, program, gl} = this
-    if (vertexShader && vertexShader.shader && fragmentShader && fragmentShader.shader) {
+    if (vertexShader && fragmentShader) {
       gl.linkProgram(program);
+
+      // Verify program linked correctly.
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         const log = gl.getProgramInfoLog(program)
-        gl.deleteProgram(program);
         throw new Error(`Program compile error: ${log}`)
       }
     }
@@ -59,7 +60,6 @@ export default class Program {
 
     uniforms.forEach(uniform => uniform.use(program))
     attributes.forEach(attribute => attribute.use(program))
-
   }
 }
 
