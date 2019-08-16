@@ -1,5 +1,5 @@
 export default class Renderer {
-  constructor({ clearColor = [0, 0, 0, 1], onSetup = () => {}, onUpdate = () => {} }, root, { gl }) {
+  constructor({ clearColor = [0, 0, 0, 1], onSetup = () => {}, onUpdate = () => {}, viewport }, root, { gl }) {
     gl.clearColor(...clearColor)
     this.clearColor = clearColor 
     this.programs = []
@@ -9,6 +9,7 @@ export default class Renderer {
     canvas.width = canvas.clientWidth
     canvas.height = canvas.clientHeight
 
+    this.viewport = viewport
     this.onSetup = onSetup
     this.onUpdate = onUpdate
   }
@@ -29,19 +30,16 @@ export default class Renderer {
     }
   }
 
-  commitUpdate({ clearColor, onSetup, onUpdate }) {
+  commitUpdate({ clearColor, onSetup, onUpdate, viewport }) {
     if (this.clearColor !== clearColor) {
       this.clearColor = clearColor
       this.gl.clearColor(...this.clearColor)
     }
 
-    if (this.onSetup !== onSetup) {
-      this.onSetup = onSetup
-    }
-
-    if (this.onUpdate !== onUpdate) {
-      this.onUpdate = onUpdate
-    }
+    this.onSetup = onSetup
+    this.onUpdate = onUpdate
+    this.viewport = viewport
+    console.log(clearColor)
   }
 
   getPublicInstance() {
@@ -51,7 +49,7 @@ export default class Renderer {
   }
 
   start() {
-    const { gl, programs } = this
+    const { gl, programs, viewport } = this
     const { canvas } = gl
 
     this.onSetup({ gl })
@@ -62,7 +60,9 @@ export default class Renderer {
       // Resize canvas
       canvas.width = canvas.clientWidth
       canvas.height = canvas.clientHeight
-      gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight)
+      if (viewport) {
+        gl.viewport(...viewport)
+      }
 
       gl.clear(gl.COLOR_BUFFER_BIT)
 

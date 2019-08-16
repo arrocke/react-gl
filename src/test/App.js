@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import model from './models/f.json'
 import DefaultShaderProgram from './DefaultShaderProgram'
 import useResolution from './use-resolution'
@@ -15,9 +15,11 @@ function App() {
       return newPos > resolution[0] ? -50 : newPos
     })
   }, [resolution])
+  
+  const viewport = useMemo(() => [0, 0, ...resolution], [resolution])
 
   return (
-    <renderer ref={renderer} clearColor={[0,0,0,1]} onUpdate={onUpdate}>
+    <renderer ref={renderer} viewport={viewport} clearColor={[0,0,0,1]} onUpdate={onUpdate}>
       <buffer name="model" data={model} />
       <DefaultShaderProgram
         buffer="model"
